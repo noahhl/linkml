@@ -61,10 +61,11 @@ class SQLAlchemyGenerator(Generator):
 
     def generate_sqla(
         self,
-        model_path: Optional[str] = None,
-        no_model_import: bool = False,
-        template: Optional[TemplateEnum] = None,
-        foreign_key_policy: Optional[ForeignKeyPolicy] = None,
+        model_path: str = None,
+        no_model_import=False,
+        template: TemplateEnum = None,
+        template_file: str = None,
+        foreign_key_policy: ForeignKeyPolicy = None,
         **kwargs,
     ) -> str:
         # src_sv = SchemaView(self.schema)
@@ -83,12 +84,15 @@ class SQLAlchemyGenerator(Generator):
                 ann = Annotation("sql_type", sql_type)
                 a.annotations[ann.tag] = ann
                 # a.sql_type = sql_type
-        if template == TemplateEnum.IMPERATIVE:
-            template_str = sqlalchemy_imperative_template_str
-        elif template == TemplateEnum.DECLARATIVE:
-            template_str = sqlalchemy_declarative_template_str
+        if template_file:
+            template_str = open(template_file, "r").read()
         else:
-            raise Exception(f"Unknown template type: {template}")
+            if template == TemplateEnum.IMPERATIVE:
+                template_str = sqlalchemy_imperative_template_str
+            elif template == TemplateEnum.DECLARATIVE:
+                template_str = sqlalchemy_declarative_template_str
+            else:
+                raise Exception(f"Unknown template type: {template}")
         template_obj = Template(template_str)
         if model_path is None:
             model_path = self.schema.name
@@ -219,9 +223,10 @@ class SQLAlchemyGenerator(Generator):
     show_default=True,
     help="Emit FK declarations",
 )
+@click.option("--template-file", help="Optional jinja2 template to use for class generation")
 @click.version_option(__version__, "-V", "--version")
 @click.command()
-def cli(yamlfile, declarative, generate_classes, pydantic, use_foreign_keys=True, **args):
+def cli(yamlfile, declarative, generate_classes, pydantic, use_foreign_keys=True, template_file=None, **args):
     """Generate SQL DDL representation"""
     if pydantic:
         pygen = PydanticGenerator(yamlfile)
@@ -235,7 +240,7 @@ def cli(yamlfile, declarative, generate_classes, pydantic, use_foreign_keys=True
         foreign_key_policy = None  # default
     else:
         foreign_key_policy = ForeignKeyPolicy.NO_FOREIGN_KEYS
-    print(gen.generate_sqla(template=t, foreign_key_policy=foreign_key_policy))
+    print(gen.generate_sqla(template=t, foreign_key_policy=foreign_key_policy, template_file = template_file))
     if generate_classes:
         raise NotImplementedError("generate classes not implemented")
 
