@@ -66,6 +66,7 @@ class SQLAlchemyGenerator(Generator):
         template: TemplateEnum = None,
         template_file: str = None,
         foreign_key_policy: ForeignKeyPolicy = None,
+        template_obj: Template = None,
         **kwargs,
     ) -> str:
         # src_sv = SchemaView(self.schema)
@@ -93,7 +94,7 @@ class SQLAlchemyGenerator(Generator):
                 template_str = sqlalchemy_declarative_template_str
             else:
                 raise Exception(f"Unknown template type: {template}")
-        template_obj = Template(template_str)
+        template_obj = template_obj or Template(template_str)
         if model_path is None:
             model_path = self.schema.name
         logging.info(f"Package for dataclasses ==  {model_path}")
