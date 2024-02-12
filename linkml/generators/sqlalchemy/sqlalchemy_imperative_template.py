@@ -45,9 +45,9 @@ mapper_registry.map_imperatively({{classname(c.name)}}, tbl_{{classname(c.name)}
   {% for mapping in backrefs[c.name] %}
   {% if mapping.uses_join_table %}
   {% else %}
-  #'{{mapping.source_slot}}': relationship( {{ mapping.target_class }}, backref='{{c.name}}' ),
+  #'{{mapping.source_slot.name}}': relationship( {{ mapping.target_class }}, backref='{{c.name}}' ),
   {% endif %}
-  #'{mapping.source_slot}': relationship()
+  #'{mapping.source_slot.name}': relationship()
   ## {{ mapping }}
   {% endfor %}
 })
