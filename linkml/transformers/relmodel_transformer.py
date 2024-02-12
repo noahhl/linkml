@@ -271,7 +271,7 @@ class RelationalModelTransformer:
                         mappings.append(
                             OneToAnyMapping(
                                 source_class=cn,
-                                source_slot=src_slot.name,
+                                source_slot=src_slot,
                                 target_class=backref_class.name,
                                 target_slot=backref_slot.name,
                             )
@@ -303,7 +303,7 @@ class RelationalModelTransformer:
                             mappings.append(
                                 ManyToManyMapping(
                                     source_class=cn,
-                                    source_slot=src_slot.name,
+                                    source_slot=src_slot,
                                     target_class=slot_range,
                                     # target_slot=backref_slot.name,
                                     join_class=linker_class.name,
@@ -315,7 +315,7 @@ class RelationalModelTransformer:
                             mappings.append(
                                 MultivaluedScalar(
                                     source_class=cn,
-                                    source_slot=src_slot.name,
+                                    source_slot=src_slot,
                                     target_slot=sn_singular,
                                     join_class=linker_class.name,
                                 )

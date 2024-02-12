@@ -30,14 +30,14 @@ class {{classname(c.name)}}({% if c.is_a %}{{ classname(c.is_a) }}{% else %}Base
     {%- for mapping in backrefs[c.name] %}
     {% if mapping.mapping_type == "ManyToMany" %}
     # ManyToMany
-    {{mapping.source_slot}} = relationship( "{{ classname(mapping.target_class) }}", secondary="{{ mapping.join_class }}")
+    {{mapping.source_slot.name}} = relationship( "{{ classname(mapping.target_class) }}", secondary="{{ mapping.join_class }}")
     {% elif mapping.mapping_type == "MultivaluedScalar" %}
-    {{mapping.source_slot}}_rel = relationship( "{{ classname(mapping.join_class) }}" )
-    {{mapping.source_slot}} = association_proxy("{{mapping.source_slot}}_rel", "{{mapping.target_slot}}",
+    {{mapping.source_slot.name}}_rel = relationship( "{{ classname(mapping.join_class) }}" )
+    {{mapping.source_slot.name}} = association_proxy("{{mapping.source_slot}}_rel", "{{mapping.target_slot}}",
                                   creator=lambda x_: {{ classname(mapping.join_class) }}({{mapping.target_slot}}=x_))
     {% else %}
     # One-To-Many: {{mapping}}
-    {{mapping.source_slot}} = relationship( "{{ classname(mapping.target_class) }}", foreign_keys="[{{ mapping.target_class }}.{{mapping.target_slot}}]")
+    {{mapping.source_slot.name}} = relationship( "{{ classname(mapping.target_class) }}", foreign_keys="[{{ mapping.target_class }}.{{mapping.target_slot}}]")
     {% endif -%}
     {%- endfor %}
 
