@@ -193,6 +193,7 @@ class RelationalModelTransformer:
                 abstract=c.abstract,
                 description=c.description,
                 unique_keys=c.unique_keys,
+                annotations=c.annotations,
             )
             for slot in source_sv.class_induced_slots(cn):
                 tgt_slot = copy(slot)
