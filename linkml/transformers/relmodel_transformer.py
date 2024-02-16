@@ -233,10 +233,13 @@ class RelationalModelTransformer:
             if self.foreign_key_policy == ForeignKeyPolicy.NO_FOREIGN_KEYS:
                 continue
             pk_slot = self.get_direct_identifier_attribute(target_sv, cn)
+            if c.mixin:
+                continue
             # if self.is_skip(c) and len(incoming_links) == 0:
             #    logging.info(f'Skipping class: {c.name}')
             #    del target.classes[cn]
             #    continue
+
             for src_slot in list(c.attributes.values()):
                 slot = copy(src_slot)
                 slot_range = slot.range
@@ -369,6 +372,15 @@ class RelationalModelTransformer:
                             forward_map[original_name] = a.name
                     ann = Annotation("foreign_key", f"{tc.name}.{tc_pk_slot.name}")
                     a.annotations[ann.tag] = ann
+                    if tc.abstract:
+                        name = f"{tc.name}_type"
+                        polymorphic_type_slot = SlotDefinition(name=name, alias=name, range="string")
+                        c.attributes[polymorphic_type_slot.name] = polymorphic_type_slot
+                        ann = Annotation("polymorphic", tc)
+                        a.annotations[ann.tag] = ann
+                    elif not tc.mixin:
+                        ann = Annotation("foreign_key", f"{tc.name}.{tc_pk_slot.name}")
+                        a.annotations[ann.tag] = ann
                     target_sv.set_modified()
             # Rewrite unique key constraints
             # - if a slot has a range of object, it may be renamed, e.g. person => person_id
