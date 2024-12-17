@@ -302,8 +302,8 @@ class RelationalModelTransformer:
                         add_attribute(linker_class.attributes, backref_slot)
                         add_attribute(linker_class.attributes, slot)
                         slot.slot_uri = "rdf:object"
-                        target.classes[linker_class.name] = linker_class
                         if slot_range_is_class:
+                            target.classes[linker_class.name] = linker_class
                             fwdann = Annotation("forwardref", "true")
                             slot.annotations[fwdann.tag] = fwdann
                             mappings.append(
